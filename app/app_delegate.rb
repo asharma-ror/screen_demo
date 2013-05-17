@@ -4,7 +4,7 @@ class AppDelegate
 
     @navigationController = UINavigationController.alloc.init
     @inquiriesController = InquiriesController.alloc.init
-
+    
     @navigationController.pushViewController(@inquiriesController, animated:true)
     @window.rootViewController = @navigationController
 
