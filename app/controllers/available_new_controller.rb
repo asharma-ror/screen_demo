@@ -5,25 +5,29 @@ class AvailableNewController < Formotion::FormController
       title: "Kitchen Sink",
       sections: [{
         rows: [{
-          title: "Preston French",
-          subtitle: "Guest Name",
-          type: :static
+          title: "Guest Name",
+          value: "",
+          key: :guest_name,
+          placeholder: "",
+          type: :string,
+          auto_correction: :no,
+          auto_capitalization: :none
         }, {
           title: "Check In",
           value: nil,
-          key: :check_in_date1,
+          key: :check_in_date,
           type: :date,
           format: :medium
         }, {
-          title: "Check In",
+          title: "Check Out",
           value: nil,
-          key: :check_in_date2,
+          key: :check_out_date,
           type: :date,
           format: :medium
         }, {
           title: "# Nights",
           value: "",
-          key: :number,
+          key: :nights,
           placeholder: "",
           type: :number,
           auto_correction: :no,
@@ -31,7 +35,7 @@ class AvailableNewController < Formotion::FormController
         }, {
           title: "Guest",
           value: "",
-          key: :number,
+          key: :guest,
           placeholder: "",
           type: :string,
           auto_correction: :no,
@@ -55,7 +59,7 @@ class AvailableNewController < Formotion::FormController
         }, {
             title: "Comments",
             value: "",
-            key: :text,
+            key: :comment,
             type: :text,
             placeholder: "",
             row_height: 100
@@ -75,6 +79,11 @@ class AvailableNewController < Formotion::FormController
   end
 
   def submit
+    delegate = UIApplication.sharedApplication.delegate
+    inquiries_array = delegate.instance_variable_get('@inquiries_array')
+    inquiries_array.push(form.render)
+    delegate.instance_variable_set('@inquiries_array',inquiries_array)
+
     @inquiriesController = InquiriesController.alloc.init
     self.navigationController.setViewControllers([@inquiriesController], animated:true)
   end

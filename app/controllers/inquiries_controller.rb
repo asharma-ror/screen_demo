@@ -14,7 +14,8 @@ class InquiriesController < UIViewController
     @table = UITableView.alloc.initWithFrame(self.view.bounds)
     self.view.addSubview @table
 
-    @data = ["1","2","3","4","5"]
+    delegate = UIApplication.sharedApplication.delegate
+    @data = delegate.instance_variable_get('@inquiries_array')
     @table.dataSource = self
     @table.delegate = self
 
@@ -25,34 +26,35 @@ class InquiriesController < UIViewController
     self.navigationController.pushViewController(availableEditController, animated: true)
   end
 
-
   def tableView(tableView, numberOfRowsInSection: section)
     @data.count
   end
 
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
     @reuseIdentifier ||= "CELL_IDENTIFIER"
-
     cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) || begin
       cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:@reuseIdentifier)
+      #cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator 
       cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton
       cell
     end
-
-    cell.textLabel.text = @data[indexPath.row]
-
+    cell.textLabel.text = @data[indexPath.row][:guest_name]
     cell
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    #tableView.deselectRowAtIndexPath(indexPath, animated: true)
-    availableController = AvailableController.alloc.init
-    self.navigationController.pushViewController(availableController, animated: true)
-
-    #alert = UIAlertView.alloc.init
-    #alert.message = "#{@data[indexPath.row]} tapped!"
-    #alert.addButtonWithTitle "OK"
-    #alert.show
+   # just for learning purpose when row tapped
+    tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    alert = UIAlertView.alloc.init
+    alert.message = "#{@data[indexPath.row][:guest_name]} tapped!"
+    alert.addButtonWithTitle "OK"
+    alert.show
   end
 
+  def tableView(tableView, accessoryButtonTappedForRowWithIndexPath:indexPath)
+    delegate = UIApplication.sharedApplication.delegate
+    inquiries_array = delegate.instance_variable_set('@inquiries_index',indexPath.row)
+    availableController = AvailableController.alloc.init
+    self.navigationController.pushViewController(availableController, animated: true)
+  end
 end

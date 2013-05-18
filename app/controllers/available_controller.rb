@@ -7,9 +7,15 @@ class AvailableController < UIViewController
 
     self.view.backgroundColor = UIColor.whiteColor
 
+    delegate = UIApplication.sharedApplication.delegate
+    inquiries_array = delegate.instance_variable_get('@inquiries_array')
+    inquiries_index = delegate.instance_variable_get('@inquiries_index')
+
+    @get_data = inquiries_array[inquiries_index]
+
     @heading = UILabel.new
     @heading.font = UIFont.systemFontOfSize(18)
-    @heading.text = 'Preston French'
+    @heading.text = @get_data[:guest_name]
     @heading.textAlignment = UITextAlignmentLeft
     @heading.textColor = UIColor.blackColor
     @heading.frame = [[5, 5], [self.view.frame.size.width - 5, 20]]
@@ -23,8 +29,6 @@ class AvailableController < UIViewController
     @subHeading.frame = [[5, 25], [self.view.frame.size.width - 5, 20]]
     self.view.addSubview @subHeading
 
-
-
     @table = UITableView.alloc.init
     @table.frame = [[0, 50], [self.view.frame.size.width, self.view.frame.size.height - 150 ]]
     self.view.addSubview @table
@@ -32,14 +36,23 @@ class AvailableController < UIViewController
     @table.dataSource = self
     @table.delegate = self
     # Just for demo purpose. will chnage it to hash format
-    @data = [["Check In","Jul 9, 2013"],["Check In","Aug 10, 2013"],["# Nights","30"],["Guest","2 Adults 0 Children"],["Email","Preston@example.com"],["Phone","808-867-5309"],["Comments","Honeymoon"]]
+
+    @data = [["Check In",Time.at(@get_data[:check_in_date]).strftime("%b %d, %Y")],["Check Out",Time.at(@get_data[:check_out_date]).strftime("%b %d, %Y")],["# Nights",@get_data[:nights]],["Guest",@get_data[:guest]],["Email",@get_data[:email]],["Phone",@get_data[:phone]],["Comments",@get_data[:comment]]]
 
     @editButton = UIButton.buttonWithType(UIButtonTypeRoundedRect)
     @editButton.setTitle("Edit", forState:UIControlStateNormal)
     @editButton.sizeToFit
-    @editButton.center = CGPointMake((self.view.frame.size.width) / 2, (self.view.frame.size.height) - 75)
+    @editButton.center = CGPointMake((self.view.frame.size.width) / 4, (self.view.frame.size.height) - 75)
     @editButton.addTarget(self, action:'edit', forControlEvents:UIControlEventTouchUpInside)
     self.view.addSubview @editButton
+
+    @deleteButton = UIButton.buttonWithType(UIButtonTypeRoundedRect)
+    @deleteButton.setTitle("Delete", forState:UIControlStateNormal)
+    @deleteButton.sizeToFit
+    @deleteButton.center = CGPointMake(((self.view.frame.size.width) / 4) * 3, (self.view.frame.size.height) - 75)
+    @deleteButton.addTarget(self, action:'delete', forControlEvents:UIControlEventTouchUpInside)
+    self.view.addSubview @deleteButton
+
   end
 
 
@@ -66,4 +79,17 @@ class AvailableController < UIViewController
     availableEditController = AvailableEditController.alloc.init
     self.navigationController.pushViewController(availableEditController, animated: true)
   end
+
+  def delete
+    delegate = UIApplication.sharedApplication.delegate
+    inquiries_array = delegate.instance_variable_get('@inquiries_array')
+    inquiries_index = delegate.instance_variable_get('@inquiries_index')
+    inquiries_array.delete_at(inquiries_index)
+    delegate.instance_variable_set('@inquiries_array',inquiries_array)
+    delegate.instance_variable_set('@inquiries_index',-1)
+
+    @inquiriesController = InquiriesController.alloc.init
+    self.navigationController.setViewControllers([@inquiriesController], animated:true)      
+  end
+
 end
