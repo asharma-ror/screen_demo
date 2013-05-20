@@ -7,15 +7,13 @@ class AvailableController < UIViewController
 
     self.view.backgroundColor = UIColor.whiteColor
 
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_get('@inquiries_array')
-    inquiries_index = delegate.instance_variable_get('@inquiries_index')
-
-    @get_data = inquiries_array[inquiries_index]
+    
+    @inquiry_id = UIApplication.sharedApplication.delegate.instance_variable_get('@objectID')
+    @get_data = InquiryStore.shared.findInquiriyWithID(@inquiry_id)
 
     @heading = UILabel.new
     @heading.font = UIFont.systemFontOfSize(18)
-    @heading.text = @get_data[:guest_name]
+    @heading.text = @get_data.guest_name
     @heading.textAlignment = UITextAlignmentLeft
     @heading.textColor = UIColor.blackColor
     @heading.frame = [[5, 5], [self.view.frame.size.width - 5, 20]]
@@ -37,7 +35,7 @@ class AvailableController < UIViewController
     @table.delegate = self
     # Just for demo purpose. will chnage it to hash format
 
-    @data = [["Check In",Time.at(@get_data[:check_in_date]).strftime("%b %d, %Y")],["Check Out",Time.at(@get_data[:check_out_date]).strftime("%b %d, %Y")],["# Nights",@get_data[:nights]],["Guest",@get_data[:guest]],["Email",@get_data[:email]],["Phone",@get_data[:phone]],["Comments",@get_data[:comment]]]
+    @data = [["Check In",Time.at(@get_data.check_in_date).strftime("%b %d, %Y")],["Check Out",Time.at(@get_data.check_out_date).strftime("%b %d, %Y")],["# Nights",@get_data.nights.to_s],["Guest",@get_data.guest],["Email",@get_data.email],["Phone",@get_data.phone],["Comments",@get_data.comment]]
 
     @editButton = UIButton.buttonWithType(UIButtonTypeRoundedRect)
     @editButton.setTitle("Edit", forState:UIControlStateNormal)
@@ -81,15 +79,21 @@ class AvailableController < UIViewController
   end
 
   def delete
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_get('@inquiries_array')
-    inquiries_index = delegate.instance_variable_get('@inquiries_index')
-    inquiries_array.delete_at(inquiries_index)
-    delegate.instance_variable_set('@inquiries_array',inquiries_array)
-    delegate.instance_variable_set('@inquiries_index',-1)
+    alert = UIAlertView.alloc.init
+    alert.message = "Do you want to delete '#{@get_data.guest_name}' "
+    alert.delegate = self
+    alert.addButtonWithTitle "Yes"
+    alert.addButtonWithTitle "No"
+    alert.show
+  end
 
-    @inquiriesController = InquiriesController.alloc.init
-    self.navigationController.setViewControllers([@inquiriesController], animated:true)      
+
+  def alertView(alertView, clickedButtonAtIndex:buttonIndex)
+    if buttonIndex == 0
+      InquiryStore.shared.removeInquiry(@get_data)
+      @inquiriesController = InquiriesController.alloc.init
+      self.navigationController.setViewControllers([@inquiriesController], animated:true)      
+    end
   end
 
 end

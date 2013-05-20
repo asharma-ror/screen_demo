@@ -14,11 +14,9 @@ class InquiriesController < UIViewController
     @table = UITableView.alloc.initWithFrame(self.view.bounds)
     self.view.addSubview @table
 
-    delegate = UIApplication.sharedApplication.delegate
-    @data = delegate.instance_variable_get('@inquiries_array')
+    @data = InquiryStore.shared.inquiries
     @table.dataSource = self
     @table.delegate = self
-
   end
 
   def add    
@@ -38,7 +36,7 @@ class InquiriesController < UIViewController
       cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton
       cell
     end
-    cell.textLabel.text = @data[indexPath.row][:guest_name]
+    cell.textLabel.text = @data[indexPath.row].guest_name
     cell
   end
 
@@ -46,15 +44,13 @@ class InquiriesController < UIViewController
    # just for learning purpose when row tapped
     tableView.deselectRowAtIndexPath(indexPath, animated: true)
     alert = UIAlertView.alloc.init
-    alert.message = "#{@data[indexPath.row][:guest_name]} tapped!"
+    alert.message = "#{@data[indexPath.row].guest_name} tapped!"
     alert.addButtonWithTitle "OK"
     alert.show
   end
 
   def tableView(tableView, accessoryButtonTappedForRowWithIndexPath:indexPath)
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_set('@inquiries_index',indexPath.row)
-    availableController = AvailableController.alloc.init
-    self.navigationController.pushViewController(availableController, animated: true)
+    UIApplication.sharedApplication.delegate.instance_variable_set('@objectID',@data[indexPath.row].objectID)
+    self.navigationController.pushViewController(AvailableController.alloc.init, animated: true)
   end
 end

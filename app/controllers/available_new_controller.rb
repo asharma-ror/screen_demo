@@ -79,10 +79,16 @@ class AvailableNewController < Formotion::FormController
   end
 
   def submit
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_get('@inquiries_array')
-    inquiries_array.push(form.render)
-    delegate.instance_variable_set('@inquiries_array',inquiries_array)
+    InquiryStore.shared.addInquiry do |inquiry|
+        inquiry.guest_name = form.render[:guest_name]
+        inquiry.check_in_date = Time.at(form.render[:check_in_date])
+        inquiry.check_out_date = Time.at(form.render[:check_out_date])
+        inquiry.nights = form.render[:nights].to_i
+        inquiry.guest = form.render[:guest]
+        inquiry.email = form.render[:email]
+        inquiry.phone = form.render[:phone]
+        inquiry.comment = form.render[:comment]
+    end
 
     @inquiriesController = InquiriesController.alloc.init
     self.navigationController.setViewControllers([@inquiriesController], animated:true)

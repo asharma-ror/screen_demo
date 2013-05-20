@@ -1,17 +1,15 @@
 class AvailableEditController < Formotion::FormController
 
   def init
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_get('@inquiries_array')
-    inquiries_index = delegate.instance_variable_get('@inquiries_index')
+    @inquiry_id = UIApplication.sharedApplication.delegate.instance_variable_get('@objectID')
+    @data = InquiryStore.shared.findInquiriyWithID(@inquiry_id)
 
-    @data = inquiries_array[inquiries_index] #{ guest_name: "Preston French", check_in_date: "326937600" , check_out_date: "326937600" , nights: "30" , adults: "2" , children: "0" , email: "Preston@example.com", phone: "808-867-5309", comment: "Honeymoon"}
     form = Formotion::Form.new({
       title: "Kitchen Sink",
       sections: [{
         rows: [{
           title: "Guest Name",
-          value: @data[:guest_name],
+          value: @data.guest_name,
           key: :guest_name,
           placeholder: "",
           type: :string,
@@ -19,19 +17,19 @@ class AvailableEditController < Formotion::FormController
           auto_capitalization: :none
         }, {
           title: "Check In",
-          value: @data[:check_in_date].to_i,
+          value: @data.check_in_date.to_i,
           key: :check_in_date,
           type: :date,
           format: :medium
         }, {
           title: "Check Out",
-          value: @data[:check_out_date].to_i,
+          value: @data.check_out_date.to_i,
           key: :check_out_date,
           type: :date,
           format: :medium
         }, {
           title: "# Nights",
-          value: @data[:nights],
+          value: @data.nights.to_i,
           key: :nights,
           placeholder: "",
           type: :number,
@@ -39,7 +37,7 @@ class AvailableEditController < Formotion::FormController
           auto_capitalization: :none
         }, {
           title: "Guest",
-          value: @data[:guest],
+          value: @data.guest,
           key: :guest,
           placeholder: "",
           type: :string,
@@ -47,7 +45,7 @@ class AvailableEditController < Formotion::FormController
           auto_capitalization: :none
         }, {
           title: "Email",
-          value: @data[:email],
+          value: @data.email,
           key: :email,
           placeholder: "",
           type: :email,
@@ -55,7 +53,7 @@ class AvailableEditController < Formotion::FormController
           auto_capitalization: :none
         }, {
           title: "Phone",
-          value: @data[:phone],
+          value: @data.phone,
           key: :phone,
           placeholder: "",
           type: :phone,
@@ -63,7 +61,7 @@ class AvailableEditController < Formotion::FormController
           auto_capitalization: :none
         }, {
             title: "Comments",
-            value: @data[:comment],
+            value: @data.comment,
             key: :comment,
             type: :text,
             placeholder: "",
@@ -84,12 +82,16 @@ class AvailableEditController < Formotion::FormController
   end
 
   def edit
-
-    delegate = UIApplication.sharedApplication.delegate
-    inquiries_array = delegate.instance_variable_get('@inquiries_array')
-    inquiries_index = delegate.instance_variable_get('@inquiries_index')
-    inquiries_array[inquiries_index] = form.render
-    delegate.instance_variable_set('@inquiries_array',inquiries_array)
+    InquiryStore.shared.updateInquiry(@inquiry_id, { guest_name: form.render[:guest_name],
+                                                     check_in_date: Time.at(form.render[:check_in_date]),
+                                                     check_out_date: Time.at(form.render[:check_out_date]), 
+                                                     nights: form.render[:nights].to_i, 
+                                                     guest: form.render[:guest], 
+                                                     email: form.render[:email], 
+                                                     phone: form.render[:phone], 
+                                                     comment: form.render[:comment]
+                                                    })
+    
 
     @inquiriesController = InquiriesController.alloc.init
     self.navigationController.setViewControllers([@inquiriesController], animated:true)    
