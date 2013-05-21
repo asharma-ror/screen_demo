@@ -11,6 +11,9 @@ class InquiriesController < UIViewController
     rightButton = UIBarButtonItem.alloc.initWithTitle("New Inquiry", style: UIBarButtonItemStyleBordered, target:self, action:'add')
     self.navigationItem.rightBarButtonItem = rightButton
 
+    leftButton = UIBarButtonItem.alloc.initWithTitle("Dashboard", style: UIBarButtonItemStyleBordered, target:self, action:'deshboard')
+    self.navigationItem.leftBarButtonItem = leftButton
+
     @table = UITableView.alloc.initWithFrame(self.view.bounds)
     self.view.addSubview @table
 
@@ -22,6 +25,10 @@ class InquiriesController < UIViewController
   def add    
     availableEditController = AvailableNewController.alloc.init
     self.navigationController.pushViewController(availableEditController, animated: true)
+  end
+
+  def deshboard
+    self.navigationController.setViewControllers([DashboardController.alloc.init], animated: true)
   end
 
   def tableView(tableView, numberOfRowsInSection: section)
