@@ -28,6 +28,22 @@ class DashboardController < UIViewController
     "Activities" if section == 1
   end
 
+  def tableView(tableView, numberOfRowsInSection: section)
+    # return the number of rows
+    @data[section].count
+  end
+
+  def tableView(tableView, heightForRowAtIndexPath:indexPath)
+    case indexPath.section
+    when 0
+      45
+    when 1
+      70
+    else
+      30
+    end
+  end
+
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
     @reuseIdentifier ||= "CELL_IDENTIFIER"
     cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) || begin
@@ -48,45 +64,5 @@ class DashboardController < UIViewController
     cell
   end
 
-  def tableView(tableView, heightForRowAtIndexPath:indexPath)
-    case indexPath.section
-    when 0
-      45
-    when 1
-      70
-    else
-      30
-    end
-  end
-
-
-  def tableView(tableView, numberOfRowsInSection: section)
-    # return the number of rows
-    @data[section].count
-  end
-
-
-  def edit
-    availableEditController = AvailableEditController.alloc.init
-    self.navigationController.pushViewController(availableEditController, animated: true)
-  end
-
-  def delete
-    alert = UIAlertView.alloc.init
-    alert.message = "Do you want to delete '#{@get_data.guest_name}' "
-    alert.delegate = self
-    alert.addButtonWithTitle "Yes"
-    alert.addButtonWithTitle "No"
-    alert.show
-  end
-
-
-  def alertView(alertView, clickedButtonAtIndex:buttonIndex)
-    if buttonIndex == 0
-      InquiryStore.shared.removeInquiry(@get_data)
-      @inquiriesController = InquiriesController.alloc.init
-      self.navigationController.setViewControllers([@inquiriesController], animated:true)      
-    end
-  end
 
 end

@@ -5,54 +5,56 @@ class AvailableNewController < Formotion::FormController
       title: "Kitchen Sink",
       sections: [{
         rows: [{
-          title: "Guest Name",
+          title: "",
           value: "",
           key: :guest_name,
-          placeholder: "",
+          placeholder: "Guest Name",
           type: :string,
           auto_correction: :no,
           auto_capitalization: :none
         }, {
-          title: "Check In",
+          title: "",
           value: nil,
           key: :check_in_date,
+          placeholder: "Check In",
           type: :date,
           format: :medium
         }, {
-          title: "Check Out",
+          title: "",
           value: nil,
           key: :check_out_date,
+          placeholder: "Check Out",
           type: :date,
           format: :medium
         }, {
-          title: "# Nights",
+          title: "",
           value: "",
           key: :nights,
-          placeholder: "",
+          placeholder: "# Nights",
           type: :number,
           auto_correction: :no,
           auto_capitalization: :none
         }, {
-          title: "Guest",
+          title: "",
           value: "",
           key: :guest,
-          placeholder: "",
+          placeholder: "Guest",
           type: :string,
           auto_correction: :no,
           auto_capitalization: :none
         }, {
-          title: "Email",
+          title: "",
           value: "",
           key: :email,
-          placeholder: "",
+          placeholder: "Email",
           type: :email,
           auto_correction: :no,
           auto_capitalization: :none
         }, {
-          title: "Phone",
+          title: "",
           value: "",
           key: :phone,
-          placeholder: "",
+          placeholder: "Phone",
           type: :phone,
           auto_correction: :no,
           auto_capitalization: :none
@@ -60,6 +62,7 @@ class AvailableNewController < Formotion::FormController
             title: "Comments",
             value: "",
             key: :comment,
+            placeholder: "Comments",
             type: :text,
             placeholder: "",
             row_height: 100
